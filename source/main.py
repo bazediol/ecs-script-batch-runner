@@ -6,6 +6,7 @@ from datetime import datetime
 output_path_folder = Path(__file__).parent / ".." / "Output"
 output_path_folder = output_path_folder.resolve()
 print(output_path_folder)
+output_path_folder.mkdir(parents=True, exist_ok=True)
 
 parser = argparse.ArgumentParser(
     prog="Output test to file"
