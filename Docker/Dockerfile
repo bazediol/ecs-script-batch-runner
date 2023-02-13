@@ -11,4 +11,4 @@ COPY source/ .
 ENV TEXT="Default value"
 ENV BUCKET_NAME="script-runner-output"
 
-ENTRYPOINT ["python", "main.py"]
+ENTRYPOINT ["./start_and_send_to_s3.sh"]
