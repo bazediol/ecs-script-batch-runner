@@ -12,6 +12,16 @@ terraform {
 variable "iam_role_arn" {
   type = string
 }
+
+resource "aws_ecr_repository" "terraform_ecr" {
+  name                 = "terraform_ecr"
+  force_delete = true
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
+
 resource "aws_ecs_cluster" "terraform_cluster" {
   name = "terraform-cluster"
 
@@ -41,7 +51,7 @@ resource "aws_ecs_task_definition" "terraform_task" {
   [
     {
         "name": "script-runner",
-        "image": "alpine:3.17",
+        "image": "${aws_ecr_repository.terraform_ecr.repository_url}:latest",
         "cpu": 0,
         "portMappings": [
             {
@@ -52,12 +62,20 @@ resource "aws_ecs_task_definition" "terraform_task" {
                 "appProtocol": "http"
             }
         ],
+        "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "terraform-container",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-create-group": "true",
+                    "awslogs-stream-prefix": "terraform"
+                }
+        },
         "essential": true,
         "environment": [],
         "environmentFiles": [],
         "mountPoints": [],
-        "volumesFrom": [],
-        "command": ["pip", "install", "-r", "requirements.txt"]
+        "volumesFrom": []
     }
   ]
   TASK_DEFINITION
@@ -71,3 +89,4 @@ resource "aws_ecs_task_definition" "terraform_task" {
   }
 
 }
+

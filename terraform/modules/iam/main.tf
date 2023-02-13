@@ -41,6 +41,7 @@ resource "aws_iam_role" "terraform_role" {
                 "ecr:BatchGetImage",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
+                "logs:CreateLogGroup",
                 "s3:*"
             ],
             "Resource": "*"
